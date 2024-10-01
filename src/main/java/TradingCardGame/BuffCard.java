@@ -3,8 +3,8 @@ package TradingCardGame;
 public class BuffCard extends Card {
     private int attackBoost;
 
-    public BuffCard(String name, int cost, int attackBoost) {
-        super(name, cost);
+    public BuffCard(String name, int cost, int attackBoost, String desc) {
+        super(name, cost, desc);
         this.attackBoost = attackBoost;
     }
 

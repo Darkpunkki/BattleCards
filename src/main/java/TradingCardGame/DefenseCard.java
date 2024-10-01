@@ -3,8 +3,8 @@ package TradingCardGame;
 public class DefenseCard extends Card {
     private int defenseValue;
 
-    public DefenseCard(String name, int cost, int defenseValue) {
-        super(name, cost);
+    public DefenseCard(String name, int cost, int defenseValue, String desc) {
+        super(name, cost, desc);
         this.defenseValue = defenseValue;
     }
 

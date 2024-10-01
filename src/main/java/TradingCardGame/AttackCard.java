@@ -3,8 +3,8 @@ package TradingCardGame;
 public class AttackCard extends Card {
     private int damage;
 
-    public AttackCard(String name, int cost, int damage) {
-        super(name, cost);
+    public AttackCard(String name, int cost, int damage, String desc) {
+        super(name, cost, desc);
         this.damage = damage;
     }
 

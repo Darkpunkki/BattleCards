@@ -20,7 +20,7 @@ public class TradingCardGame extends Game {
 
     @Override
     protected boolean endOfGame() {
-        // TradingCardGame.Game ends when any player's health is <= 0
+        // Game ends when any player's health is <= 0
         for (Player player : players) {
             if (player.getHealth() <= 0) {
                 return true;
@@ -32,7 +32,7 @@ public class TradingCardGame extends Game {
     @Override
     protected void playSingleTurn(int playerIndex) {
         Player currentPlayer = players.get(playerIndex);
-        Player opponent = GameUtils.getOpponent(currentPlayer, players); // Get the opponent for this turn
+        Player opponent = GameUtils.getOpponent(currentPlayer, players);
 
         System.out.println("It's " + currentPlayer.getName() + "'s turn!");
 
@@ -40,18 +40,19 @@ public class TradingCardGame extends Game {
         currentPlayer.replenishEnergy(turnNumber);
 
         // Draw cards at the start of the turn
-        List<Card> initialDrawnCards = currentPlayer.drawCards(3);
-        currentPlayer.displayCardDetails(initialDrawnCards); // Display information about the cards drawn at the start
+        List<Card> initialDrawnCards = currentPlayer.drawCards(1);
+        currentPlayer.displayCardDetails(initialDrawnCards);
 
-        // Show player status and hand
-        currentPlayer.displayStatus();
-        currentPlayer.displayHand();
+        // Show player status and hand with visuals
+        currentPlayer.displayStatusWithBars();
+        currentPlayer.displayHandWithVisuals();
 
         // Input loop for playing cards, drawing more cards, or ending turn
         Scanner scanner = new Scanner(System.in);
         boolean turnEnded = false;
 
         while (!turnEnded) {
+            currentPlayer.displayStatusWithBars();
             System.out.println(" ");
             System.out.println("Actions:");
             System.out.println("1. Play a card");
@@ -63,21 +64,18 @@ public class TradingCardGame extends Game {
 
             switch (choice) {
                 case 1:
-                    // Play a card
                     boolean cardSelected = false;
                     while (!cardSelected) {
                         System.out.println("Choose a card to play (enter card number, or enter 0 to cancel): ");
-                        currentPlayer.displayHand();
-
-                        int cardIndex = scanner.nextInt() - 1; // Get card index, user inputs 0 to cancel
+                        currentPlayer.displayHandWithVisuals(); // Visualized hand
+                        int cardIndex = scanner.nextInt() - 1;
 
                         if (cardIndex == -1) {
-                            // User chose to cancel and return to the main actions menu
                             System.out.println("Returning to the actions menu...");
-                            cardSelected = true; // Exit the inner loop
+                            cardSelected = true;
                         } else if (cardIndex >= 0 && cardIndex < currentPlayer.getHand().size()) {
-                            currentPlayer.playCard(cardIndex, opponent); // Pass both players (current and opponent)
-                            cardSelected = true; // Exit the inner loop
+                            currentPlayer.playCard(cardIndex, opponent);
+                            cardSelected = true;
                         } else {
                             System.out.println("Invalid card selection. Try again.");
                         }
@@ -85,24 +83,21 @@ public class TradingCardGame extends Game {
                     break;
 
                 case 2:
-                    // Spend energy to draw a card
                     if (currentPlayer.getEnergy() >= 3) {
-                        List<Card> newDrawnCards = currentPlayer.drawCards(1); // Draw 1 card
-                        currentPlayer.spendEnergy(3); // Deduct 3 energy for drawing the card
-                        currentPlayer.displayCardDetails(newDrawnCards); // Display the info about the drawn card
+                        List<Card> newDrawnCards = currentPlayer.drawCards(1);
+                        currentPlayer.spendEnergy(3);
+                        currentPlayer.displayCardDetails(newDrawnCards);
                     } else {
                         System.out.println("Not enough energy to draw an additional card.");
                     }
                     break;
 
                 case 3:
-                    // End the turn
                     turnEnded = true;
                     currentPlayer.endTurn();
                     break;
 
                 case 4:
-                    // View detailed info about cards in hand
                     currentPlayer.displayCardInfo();
                     break;
 
@@ -118,11 +113,9 @@ public class TradingCardGame extends Game {
                 currentPlayer.endTurn();
             }
         }
-        turnNumber++; // Increment the turn number
+
+    turnNumber++; // Increment the turn number
     }
-
-
-
 
 
     @Override

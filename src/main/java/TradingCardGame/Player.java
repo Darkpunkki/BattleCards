@@ -15,9 +15,9 @@ public class Player {
 
     public Player(String name, EnergyReplenishmentStrategy energyReplenishmentStrategy) {
         this.name = name;
-        this.health = 30; // Starting health
+        this.health = 40; // Starting health
         this.shield = 0;  // Shield starts at 0
-        this.energy = 10; // Starting energy
+        this.energy = 15; // Starting energy
         this.deck = new Deck();
         this.hand = new ArrayList<>();
         this.energyReplenishmentStrategy = energyReplenishmentStrategy;
@@ -99,12 +99,83 @@ public class Player {
         System.out.println(name + " (Health: " + health + ", Energy: " + energy + ")");
     }
 
+    public void displayStatusWithBars() {
+        System.out.println(name + "'s Status:");
+
+        // Health Bar (Green)
+        int maxHealth = 40;
+        int healthBlocks = Math.max(0, Math.min(10, (int)((double)health / maxHealth * 10))); // Clamp value between 0 and 10
+        String healthBar = "\033[32mHealth: [" + "█".repeat(healthBlocks) + " ".repeat(10 - healthBlocks) + "] " + health + "/" + maxHealth + "\033[0m"; // Green color for health
+        System.out.println(healthBar);
+
+        // Energy Bar (Yellow)
+        int maxEnergy = 100;
+        int energyBlocks = Math.max(0, Math.min(10, (int)((double)energy / maxEnergy * 10))); // Clamp value between 0 and 10
+        String energyBar = "\033[33mEnergy: [" + "█".repeat(energyBlocks) + " ".repeat(10 - energyBlocks) + "] " + energy + "/" + maxEnergy + "\033[0m"; // Blue color for energy
+        System.out.println(energyBar);
+
+        // Shield Bar (Blue)
+        int startShield = 20;
+        int shieldBlocks = Math.max(0, Math.min(10, (int)((double)shield / startShield * 10))); // Clamp value between 0 and 20
+        String shieldBar = "\033[34mShield: [" + "█".repeat(shieldBlocks) + " ".repeat(10 - shieldBlocks) + "] " + shield + "/" + startShield + "\033[0m"; // Blue color for shield
+        System.out.println(shieldBar);
+    }
+
+
+
+
     public void displayHand() {
         System.out.println(name + "'s Hand:");
         for (int i = 0; i < hand.size(); i++) {
             System.out.println((i + 1) + ". " + hand.get(i));
         }
     }
+
+    public void displayHandWithVisuals() {
+        System.out.println(name + "'s Hand:");
+
+        for (int i = 0; i < hand.size(); i++) {
+            Card card = hand.get(i);
+
+            // Calculate the frame width and padding
+            int frameWidth = 36;
+            int innerWidth = frameWidth - 2; // Width excluding the border characters
+
+            // Print the card frame
+            System.out.println(" ");
+            System.out.println("Card " + (i + 1) + ":");
+            System.out.println("+------------------------------------+");
+            System.out.printf("| %-34s |\n", card.getName()); // Adjust to fit 34 characters for name
+            System.out.println("|------------------------------------|");
+            System.out.printf("| Cost: %-28s |\n", card.getCost() + " Energy"); // Adjust for cost
+            System.out.println("+------------------------------------+");
+
+            // Print the description with wrapping if it's too long
+            printDescription(card.getDesc(), innerWidth);
+
+            System.out.println("+------------------------------------+");
+        }
+    }
+
+    private void printDescription(String desc, int innerWidth) {
+        String[] words = desc.split(" ");
+        StringBuilder line = new StringBuilder();
+
+        for (String word : words) {
+            if (line.length() + word.length() + 1 > innerWidth) {
+                // Print the current line if adding the next word exceeds the width
+                System.out.printf("| %-34s |\n", line.toString().trim());
+                line = new StringBuilder(); // Start a new line
+            }
+            line.append(word).append(" ");
+        }
+        // Print the remaining text in the line
+        if (line.length() > 0) {
+            System.out.printf("| %-34s |\n", line.toString().trim());
+        }
+    }
+
+
 
     public List <Card> getHand() {
         return hand;
@@ -165,7 +236,7 @@ public class Player {
     }
 
     public void displayCardInfo() {
-        System.out.println("TradingCardGame.Card Details:");
+        System.out.println("Card Details:");
 
         for (int i = 0; i < hand.size(); i++) {
             Card card = hand.get(i);
